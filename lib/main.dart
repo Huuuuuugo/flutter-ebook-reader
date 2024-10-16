@@ -58,9 +58,18 @@ class BookCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // book cover
-          Image.network(
-            cover,
+          Stack(
+            alignment: AlignmentDirectional.topEnd,
+            children: [
+              // book cover
+              Image.network(
+                cover,
+              ),
+
+              // add to favorites icon
+              const Icon(Icons.bookmark_border_sharp,
+                  color: Color.fromARGB(255, 255, 200, 0), size: 30)
+            ],
           ),
           const Padding(padding: EdgeInsets.all(3)),
 
