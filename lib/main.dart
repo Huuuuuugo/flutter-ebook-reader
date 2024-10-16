@@ -10,11 +10,78 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('Hello, world!', textDirection: TextDirection.ltr),
-      ],
+    return const MaterialApp(
+      home: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Hello, world!', textDirection: TextDirection.ltr),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                BookCard(
+                    title: 'The Bible of Nature',
+                    author: 'Oswald, Felix L.',
+                    cover:
+                        'https://www.gutenberg.org/cache/epub/72134/pg72134.cover.medium.jpg'),
+                BookCard(
+                    title: 'Kazan',
+                    author: 'Curwood, James Oliver',
+                    cover:
+                        'https://www.gutenberg.org/cache/epub/72127/pg72127.cover.medium.jpg')
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BookCard extends StatelessWidget {
+  // constructor arguments
+  final String title;
+  final String author;
+  final String cover;
+
+  const BookCard(
+      {super.key,
+      required this.title,
+      required this.author,
+      required this.cover});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 110,
+      height: 220,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // book cover
+          Image.network(
+            cover,
+          ),
+          const Padding(padding: EdgeInsets.all(3)),
+
+          // book title
+          Text(
+            title,
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          const Padding(padding: EdgeInsets.all(2)),
+
+          // book author
+          Text(
+            author,
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
+          ),
+        ],
+      ),
     );
   }
 }
