@@ -89,9 +89,7 @@ class HomePageState extends State<HomePage> {
                       final item = store.result.value[index];
 
                       return BookCard(
-                        title: item.title,
-                        author: item.author,
-                        cover: item.coverUrl,
+                        book: item,
                       );
                     },
                   );
