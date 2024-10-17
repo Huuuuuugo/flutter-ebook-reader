@@ -20,14 +20,8 @@ class _MyAppState extends State<VocsyEpubWidget> {
   Dio dio = Dio();
   String filePath = "";
 
-  @override
-  void initState() {
-    download();
-    super.initState();
-  }
-
   /// ANDROID VERSION
-  Future<void> fetchAndroidVersion() async {
+  Future<void> fetchAndroidVersion(String url, String fileName) async {
     final String? version = await getAndroidVersion();
     if (version != null) {
       String? firstPart;
@@ -39,11 +33,11 @@ class _MyAppState extends State<VocsyEpubWidget> {
       }
       int intValue = int.parse(firstPart);
       if (intValue >= 13) {
-        await startDownload();
+        await startDownload(url, fileName);
       } else {
         final PermissionStatus status = await Permission.storage.request();
         if (status == PermissionStatus.granted) {
-          await startDownload();
+          await startDownload(url, fileName);
         } else {
           await Permission.storage.request();
         }
@@ -62,19 +56,46 @@ class _MyAppState extends State<VocsyEpubWidget> {
     }
   }
 
-  download() async {
+  download(String url, String fileName) async {
     if (Platform.isIOS) {
       final PermissionStatus status = await Permission.storage.request();
       if (status == PermissionStatus.granted) {
-        await startDownload();
+        await startDownload(url, fileName);
       } else {
         await Permission.storage.request();
       }
     } else if (Platform.isAndroid) {
-      await fetchAndroidVersion();
+      await fetchAndroidVersion(url, fileName);
     } else {
       PlatformException(code: '500');
     }
+  }
+
+  // faz o download e abertura do livro a partir de uma URL
+  // url: link de download do epub
+  // fileName: nome do arquivo, sem extensão, onde o livro baixado será salvo
+  getBook(String url, String fileName) async {
+    print("=====filePath======$filePath");
+    if (filePath == "") {
+      await download(url, fileName);
+    }
+    VocsyEpub.setConfig(
+      themeColor: Theme.of(context).primaryColor,
+      identifier: "iosBook",
+      scrollDirection: EpubScrollDirection.ALLDIRECTIONS,
+      allowSharing: true,
+      enableTts: true,
+      // nightMode: true,
+    );
+
+    // get current locator
+    VocsyEpub.locatorStream.listen((locator) {
+      print('LOCATOR: $locator');
+    });
+
+    VocsyEpub.open(
+      filePath,
+    );
   }
 
   @override
@@ -99,67 +120,13 @@ class _MyAppState extends State<VocsyEpubWidget> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        print("=====filePath======$filePath");
-                        if (filePath == "") {
-                          download();
-                        } else {
-                          VocsyEpub.setConfig(
-                            themeColor: Theme.of(context).primaryColor,
-                            identifier: "iosBook",
-                            scrollDirection: EpubScrollDirection.ALLDIRECTIONS,
-                            allowSharing: true,
-                            enableTts: true,
-                            // nightMode: true,
-                          );
-
-                          // get current locator
-                          VocsyEpub.locatorStream.listen((locator) {
-                            print('LOCATOR: $locator');
-                          });
-
-                          VocsyEpub.open(
-                            filePath,
-                            // lastLocation: EpubLocator.fromJson({
-                            //   "bookId": "2239",
-                            //   "href": "/OEBPS/ch06.xhtml",
-                            //   "created": 1539934158390,
-                            //   "locations": {
-                            //     "cfi": "epubcfi(/0!/4/4[simple_book]/2/2/6)"
-                            //   }
-                            // }),
-                          );
-                        }
+                        await getBook(
+                          "https://www.gutenberg.org/ebooks/72134.epub3.images",
+                          'The Bible of Nature 3',
+                        );
                       },
                       child: Text('Open Online E-pub'),
                     ),
-                    // ElevatedButton(
-                    //   onPressed: () async {
-                    //     VocsyEpub.setConfig(
-                    //       themeColor: Theme.of(context).primaryColor,
-                    //       identifier: "iosBook",
-                    //       scrollDirection: EpubScrollDirection.ALLDIRECTIONS,
-                    //       allowSharing: true,
-                    //       enableTts: true,
-                    //       nightMode: true,
-                    //     );
-                    //     // get current locator
-                    //     VocsyEpub.locatorStream.listen((locator) {
-                    //       print('LOCATOR: $locator');
-                    //     });
-                    //     await VocsyEpub.openAsset(
-                    //       'assets/4.epub',
-                    //       lastLocation: EpubLocator.fromJson({
-                    //         "bookId": "2239",
-                    //         "href": "/OEBPS/ch06.xhtml",
-                    //         "created": 1539934158390,
-                    //         "locations": {
-                    //           "cfi": "epubcfi(/0!/4/4[simple_book]/2/2/6)"
-                    //         }
-                    //       }),
-                    //     );
-                    //   },
-                    //   child: Text('Open Assets E-pub'),
-                    // ),
                   ],
                 ),
         ),
@@ -167,7 +134,7 @@ class _MyAppState extends State<VocsyEpubWidget> {
     );
   }
 
-  startDownload() async {
+  startDownload(String url, String fileName) async {
     setState(() {
       loading = true;
     });
@@ -175,13 +142,14 @@ class _MyAppState extends State<VocsyEpubWidget> {
         ? await getExternalStorageDirectory()
         : await getApplicationDocumentsDirectory();
 
-    String path = appDocDir!.path + '/book1.epub';
+    String path = '${appDocDir!.path}/${fileName}.epub';
+    print(path);
     File file = File(path);
 
     if (!File(path).existsSync()) {
       await file.create();
       await dio.download(
-        "https://www.gutenberg.org/ebooks/72134.epub3.images",
+        url,
         path,
         deleteOnError: true,
         onReceiveProgress: (receivedBytes, totalBytes) {
