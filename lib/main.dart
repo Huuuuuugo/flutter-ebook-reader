@@ -1,8 +1,9 @@
 import 'package:ebook_reader/app/pages/home/home_page.dart';
+import 'package:ebook_reader/app/pages/home/widgets/vocsy_epub_widget.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const VocsyEpubWidget());
 }
 
 class MyApp extends StatelessWidget {
