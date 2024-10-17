@@ -17,8 +17,6 @@ class BookCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => {print('pressed book')},
       child: SizedBox(
-        width: 110,
-        height: 220,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -28,6 +26,8 @@ class BookCard extends StatelessWidget {
                 // book cover
                 Image.network(
                   cover,
+                  height: 120,
+                  fit: BoxFit.scaleDown,
                 ),
 
                 // add to favorites button
