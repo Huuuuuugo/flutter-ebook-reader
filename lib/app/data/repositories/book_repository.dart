@@ -21,7 +21,8 @@ class BookRepository implements IBookRepository {
     if (response.statusCode == 200) {
       final List<BookModel> books = [];
 
-      final body = jsonDecode(response.body);
+      final codeUnits = response.body.codeUnits;
+      final body = jsonDecode(const Utf8Decoder().convert(codeUnits));
 
       body.map((item) {
         final BookModel book = BookModel.fromMap(item);
