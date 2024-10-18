@@ -1,7 +1,9 @@
 import 'package:ebook_reader/app/data/models/book_model.dart';
+import 'package:ebook_reader/app/pages/home/widgets/vocsy_epub_widget.dart';
 import 'package:flutter/material.dart';
 
-class BookCard extends StatelessWidget {
+// TODO: mostrar indicador de carregamento enquanto o livro estiver sendo baixado
+class BookCard extends VocsyEpubWidget {
   // constructor arguments
   final BookModel book;
 
@@ -11,9 +13,21 @@ class BookCard extends StatelessWidget {
   });
 
   @override
+  State createState() {
+    return BookCardState();
+  }
+}
+
+class BookCardState extends VocsyEpubWidgetState<BookCard> {
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {print('pressed book ${book.id}')},
+      onTap: () async {
+        getBook(
+          widget.book.downloadUrl,
+          widget.book.id.toString(),
+        );
+      },
       child: SizedBox(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -23,14 +37,16 @@ class BookCard extends StatelessWidget {
               children: [
                 // book cover
                 Image.network(
-                  book.coverUrl,
+                  widget.book.coverUrl,
                   height: 120,
                   fit: BoxFit.scaleDown,
                 ),
 
                 // add to favorites button
                 GestureDetector(
-                  onTap: () => {print('pressed favorite ${book.id}')},
+                  onTap: () {
+                    print('pressed favorite ${widget.book.title}');
+                  },
                   child: const Icon(Icons.bookmark_border_sharp,
                       color: Color.fromARGB(255, 255, 200, 0), size: 30),
                 )
@@ -40,7 +56,7 @@ class BookCard extends StatelessWidget {
 
             // book title
             Text(
-              book.title,
+              widget.book.title,
               textDirection: TextDirection.ltr,
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
@@ -49,7 +65,7 @@ class BookCard extends StatelessWidget {
 
             // book author
             Text(
-              book.author,
+              widget.book.author,
               textDirection: TextDirection.ltr,
               textAlign: TextAlign.center,
               style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 10),

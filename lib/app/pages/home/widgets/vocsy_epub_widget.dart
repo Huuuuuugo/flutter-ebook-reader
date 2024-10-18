@@ -7,20 +7,23 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vocsy_epub_viewer/epub_viewer.dart';
 
+// TODO: fazer com que o app continue a leitura a partir de onde parou da última vez
 class VocsyEpubWidget extends StatefulWidget {
   const VocsyEpubWidget({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State createState() {
+    return VocsyEpubWidgetState();
+  }
 }
 
-class _MyAppState extends State<VocsyEpubWidget> {
+class VocsyEpubWidgetState<T extends StatefulWidget> extends State<T> {
   final platform = MethodChannel('my_channel');
   bool loading = false;
   Dio dio = Dio();
   String filePath = "";
 
-  /// ANDROID VERSION
+  // verifica a versão do android para decidir a forma correta de acessar o armazenamento
   Future<void> fetchAndroidVersion(String url, String fileName) async {
     final String? version = await getAndroidVersion();
     if (version != null) {
@@ -56,6 +59,7 @@ class _MyAppState extends State<VocsyEpubWidget> {
     }
   }
 
+  // faz o download do livro apenas se o arquivo de saída ainda não existir
   download(String url, String fileName) async {
     if (Platform.isIOS) {
       final PermissionStatus status = await Permission.storage.request();
@@ -76,9 +80,8 @@ class _MyAppState extends State<VocsyEpubWidget> {
   // fileName: nome do arquivo, sem extensão, onde o livro baixado será salvo
   getBook(String url, String fileName) async {
     print("=====filePath======$filePath");
-    if (filePath == "") {
-      await download(url, fileName);
-    }
+    await download(url, fileName);
+
     VocsyEpub.setConfig(
       themeColor: Theme.of(context).primaryColor,
       identifier: "iosBook",
@@ -121,8 +124,8 @@ class _MyAppState extends State<VocsyEpubWidget> {
                     ElevatedButton(
                       onPressed: () async {
                         await getBook(
-                          "https://www.gutenberg.org/ebooks/72134.epub3.images",
-                          'The Bible of Nature 3',
+                          "https://www.gutenberg.org/ebooks/63606.epub3.images",
+                          'Lupe',
                         );
                       },
                       child: Text('Open Online E-pub'),
