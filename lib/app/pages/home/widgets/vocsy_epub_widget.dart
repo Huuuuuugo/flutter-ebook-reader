@@ -25,6 +25,8 @@ class VocsyEpubWidget extends StatefulWidget {
 class VocsyEpubWidgetState<T extends StatefulWidget> extends State<T> {
   final platform = MethodChannel('my_channel');
   bool loading = false;
+  bool hasDownloaded = false;
+  double progress = 0;
   Dio dio = Dio();
   String filePath = "";
 
@@ -74,25 +76,30 @@ class VocsyEpubWidgetState<T extends StatefulWidget> extends State<T> {
   // fileName: nome do arquivo, sem extensão, onde o livro baixado será salvo
   getBook(String url, String fileName) async {
     print("=====filePath======$filePath");
-    await _decideDownloadMethod(url, fileName);
+    if (!loading) {
+      await _decideDownloadMethod(url, fileName);
+      print('downloaded: $hasDownloaded');
 
-    VocsyEpub.setConfig(
-      themeColor: Theme.of(context).primaryColor,
-      identifier: "iosBook",
-      scrollDirection: EpubScrollDirection.ALLDIRECTIONS,
-      allowSharing: true,
-      enableTts: true,
-      // nightMode: true,
-    );
+      if (!hasDownloaded) {
+        VocsyEpub.setConfig(
+          themeColor: Theme.of(context).primaryColor,
+          identifier: "iosBook",
+          scrollDirection: EpubScrollDirection.ALLDIRECTIONS,
+          allowSharing: true,
+          enableTts: true,
+          // nightMode: true,
+        );
 
-    // get current locator
-    VocsyEpub.locatorStream.listen((locator) {
-      print('LOCATOR: $locator');
-    });
+        // get current locator
+        VocsyEpub.locatorStream.listen((locator) {
+          print('LOCATOR: $locator');
+        });
 
-    VocsyEpub.open(
-      filePath,
-    );
+        VocsyEpub.open(
+          filePath,
+        );
+      }
+    }
   }
 
   // verifica a versão do android para decidir a forma correta de acessar o
@@ -152,9 +159,6 @@ class VocsyEpubWidgetState<T extends StatefulWidget> extends State<T> {
 
   // faz o download do livro apenas se o arquivo de saída ainda não existir
   _startDownload(String url, String fileName) async {
-    setState(() {
-      loading = true;
-    });
     Directory? appDocDir = Platform.isAndroid
         ? await getExternalStorageDirectory()
         : await getApplicationDocumentsDirectory();
@@ -164,13 +168,20 @@ class VocsyEpubWidgetState<T extends StatefulWidget> extends State<T> {
     File file = File(path);
 
     if (!File(path).existsSync()) {
+      print('download started');
+      setState(() {
+        loading = true;
+        progress = 0;
+      });
+
       await file.create();
       await dio.download(
         url,
         path,
         deleteOnError: true,
         onReceiveProgress: (receivedBytes, totalBytes) {
-          print('Download --- ${(receivedBytes / totalBytes) * 100}');
+          progress = (receivedBytes / totalBytes) * 100;
+          // print('Download --- ${progress}');
           setState(() {
             loading = true;
           });
@@ -179,12 +190,16 @@ class VocsyEpubWidgetState<T extends StatefulWidget> extends State<T> {
         setState(() {
           loading = false;
           filePath = path;
+          hasDownloaded = true;
+          print('has downloaded');
         });
       });
     } else {
       setState(() {
         loading = false;
         filePath = path;
+        hasDownloaded = false;
+        print('has not downloaded');
       });
     }
   }

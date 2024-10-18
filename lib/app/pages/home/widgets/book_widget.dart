@@ -9,7 +9,6 @@ Future<void> initFavoritesRepository() async {
   favoritesRepository = await FavoritesRepository.create();
 }
 
-// TODO: mostrar indicador de carregamento enquanto o livro estiver sendo baixado
 // TODO: iniciar ícone de favorito de acordo com a lista de favoritos
 // TODO: atualizar ícone de favorito quando tocado
 class BookCard extends VocsyEpubWidget {
@@ -42,23 +41,62 @@ class BookCardState extends VocsyEpubWidgetState<BookCard> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Stack(
-              alignment: AlignmentDirectional.topEnd,
+              alignment: AlignmentDirectional.center,
               children: [
-                // book cover
-                Image.network(
-                  widget.book.coverUrl,
-                  height: 120,
-                  fit: BoxFit.scaleDown,
-                ),
+                Stack(
+                  alignment: AlignmentDirectional.topEnd,
+                  children: [
+                    loading
+                        ? Column(
+                            children: [
+                              ColorFiltered(
+                                colorFilter: ColorFilter.mode(
+                                  Colors.grey,
+                                  BlendMode.saturation,
+                                ),
+                                child: ColorFiltered(
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.grey,
+                                    BlendMode.darken,
+                                  ),
+                                  child: Image.network(
+                                    widget.book.coverUrl,
+                                    height: 120,
+                                    fit: BoxFit.scaleDown,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Image.network(
+                            widget.book.coverUrl,
+                            height: 120,
+                            fit: BoxFit.scaleDown,
+                          ),
 
-                // add to favorites button
-                GestureDetector(
-                  onTap: () {
-                    favoritesRepository?.changeFavorite(widget.book.id);
-                  },
-                  child: const Icon(Icons.bookmark_border_sharp,
-                      color: Color.fromARGB(255, 255, 200, 0), size: 30),
-                )
+                    // add to favorites button
+                    GestureDetector(
+                      onTap: () {
+                        favoritesRepository?.changeFavorite(widget.book.id);
+                      },
+                      child: const Icon(Icons.bookmark_border_sharp,
+                          color: Color.fromARGB(255, 255, 200, 0), size: 30),
+                    ),
+                  ],
+                ),
+                if (loading)
+                  Column(children: [
+                    CircularProgressIndicator(),
+                    const Padding(padding: EdgeInsets.all(3)),
+                    Text(
+                      '  ${progress.toStringAsFixed(2)}%',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    )
+                  ])
               ],
             ),
             const Padding(padding: EdgeInsets.all(3)),

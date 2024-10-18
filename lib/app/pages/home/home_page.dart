@@ -75,6 +75,7 @@ class HomePageState extends State<HomePage> {
 
                   // exibe a grade de cards do livro
                   return GridView.builder(
+                    physics: BouncingScrollPhysics(),
                     itemCount: store.result.value.length,
                     padding: const EdgeInsets.only(top: 64, bottom: 80),
                     gridDelegate:
