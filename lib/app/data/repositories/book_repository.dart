@@ -19,7 +19,8 @@ class BookRepository implements IBookRepository {
     );
 
     if (response.statusCode == 200) {
-      final List<BookModel> books = [];
+      List<BookModel> books = [];
+      List bookIds = [];
 
       final codeUnits = response.body.codeUnits;
       final body = jsonDecode(const Utf8Decoder().convert(codeUnits));
@@ -28,6 +29,17 @@ class BookRepository implements IBookRepository {
         final BookModel book = BookModel.fromMap(item);
         books.add(book);
       }).toList();
+
+      // remove ids repetidos da lista de livros
+      books = books.where(
+        (e) {
+          if (!bookIds.contains(e.id)) {
+            bookIds.add(e.id);
+            return true;
+          }
+          return false;
+        },
+      ).toList();
 
       return books;
     } else {
