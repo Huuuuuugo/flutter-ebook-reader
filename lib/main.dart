@@ -1,7 +1,11 @@
 import 'package:ebook_reader/app/pages/home/home_page.dart';
+import 'package:ebook_reader/app/pages/home/widgets/book_widget.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initFavoritesRepository(); // instancia o FavoritesRepository do BookCard
+
   runApp(const MyApp());
 }
 
