@@ -3,12 +3,6 @@ import 'package:ebook_reader/app/data/repositories/favorites_repository.dart';
 import 'package:ebook_reader/app/pages/home/widgets/vocsy_epub_widget.dart';
 import 'package:flutter/material.dart';
 
-FavoritesRepository? favoritesRepository;
-
-Future<void> initFavoritesRepository() async {
-  favoritesRepository = await FavoritesRepository.create();
-}
-
 // TODO: iniciar ícone de favorito de acordo com a lista de favoritos
 // TODO: atualizar ícone de favorito quando tocado
 class BookCard extends VocsyEpubWidget {
