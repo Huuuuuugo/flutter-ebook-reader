@@ -1,5 +1,6 @@
 import 'package:ebook_reader/app/data/http/http_client.dart';
 import 'package:ebook_reader/app/data/repositories/book_repository.dart';
+import 'package:ebook_reader/app/data/repositories/favorites_repository.dart';
 import 'package:ebook_reader/app/pages/home/stores/book_store.dart';
 import 'package:ebook_reader/app/pages/home/widgets/book_widget.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class HomePageState extends State<HomePage> {
       client: HttpClient(),
     ),
   );
+  bool favoritesToggle = false;
 
   @override
   void initState() {
@@ -38,6 +40,25 @@ class HomePageState extends State<HomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Row(
+            children: [
+              Padding(padding: const EdgeInsets.only(top: 32, left: 16)),
+              Text(
+                'Apenas favoritos: ',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Transform.scale(
+                scale: 0.7,
+                child: Switch(
+                    value: favoritesToggle,
+                    onChanged: (bool newValue) {
+                      setState(() {
+                        favoritesToggle = newValue;
+                      });
+                    }),
+              ),
+            ],
+          ),
           Expanded(
             child: AnimatedBuilder(
                 animation: Listenable.merge([
@@ -63,21 +84,33 @@ class HomePageState extends State<HomePage> {
                     );
                   }
 
+                  // define a lista de livros que serão exibidos
+                  favoritesRepository!.updateList();
+                  List booksList = store.result.value;
+
+                  if (favoritesToggle) {
+                    List favoritesList = favoritesRepository!.list;
+                    booksList = booksList
+                        .where((e) => favoritesList.contains(e.id))
+                        .toList();
+                  }
+
                   // exibe aviso de lista vazia
-                  if (store.result.value.isEmpty) {
-                    const Center(
+                  if (booksList.isEmpty) {
+                    return const Center(
                       child: Text(
-                        'Lista de livros vazia',
+                        'Lista de livros vazia.',
                         textDirection: TextDirection.ltr,
                       ),
                     );
                   }
+                  print(favoritesRepository!.list);
 
                   // exibe a grade de cards do livro
                   return GridView.builder(
                     physics: BouncingScrollPhysics(),
-                    itemCount: store.result.value.length,
-                    padding: const EdgeInsets.only(top: 64, bottom: 80),
+                    itemCount: booksList.length,
+                    padding: const EdgeInsets.only(top: 48, bottom: 80),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -86,7 +119,7 @@ class HomePageState extends State<HomePage> {
                       childAspectRatio: 0.6,
                     ),
                     itemBuilder: (_, index) {
-                      final item = store.result.value[index];
+                      final item = booksList[index];
 
                       return BookCard(
                         book: item,
