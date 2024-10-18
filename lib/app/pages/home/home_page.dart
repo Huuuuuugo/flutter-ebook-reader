@@ -79,11 +79,10 @@ class HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.only(top: 64, bottom: 80),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3, // Number of columns
-                      crossAxisSpacing: 16.0, // Spacing between columns
-                      mainAxisSpacing: 16.0, // Spacing between rows
-                      childAspectRatio:
-                          0.6, // Adjust based on your item aspect ratio
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 16.0,
+                      mainAxisSpacing: 16.0,
+                      childAspectRatio: 0.6,
                     ),
                     itemBuilder: (_, index) {
                       final item = store.result.value[index];
