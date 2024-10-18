@@ -3,8 +3,6 @@ import 'package:ebook_reader/app/data/repositories/favorites_repository.dart';
 import 'package:ebook_reader/app/pages/home/widgets/vocsy_epub_widget.dart';
 import 'package:flutter/material.dart';
 
-// TODO: iniciar ícone de favorito de acordo com a lista de favoritos
-// TODO: atualizar ícone de favorito quando tocado
 class BookCard extends VocsyEpubWidget {
   // constructor arguments
   final BookModel book;
@@ -23,6 +21,7 @@ class BookCard extends VocsyEpubWidget {
 class BookCardState extends VocsyEpubWidgetState<BookCard> {
   @override
   Widget build(BuildContext context) {
+    bool isFavorite = favoritesRepository!.list.contains(widget.book.id);
     return GestureDetector(
       onTap: () async {
         getBook(
@@ -70,11 +69,21 @@ class BookCardState extends VocsyEpubWidgetState<BookCard> {
 
                     // add to favorites button
                     GestureDetector(
-                      onTap: () {
-                        favoritesRepository?.changeFavorite(widget.book.id);
+                      onTap: () async {
+                        await favoritesRepository!
+                            .changeFavorite(widget.book.id);
+                        await favoritesRepository!.updateList();
+                        setState(() {
+                          isFavorite = favoritesRepository!.list
+                              .contains(widget.book.id);
+                        });
                       },
-                      child: const Icon(Icons.bookmark_border_sharp,
-                          color: Color.fromARGB(255, 255, 200, 0), size: 30),
+                      child: isFavorite
+                          ? const Icon(Icons.bookmark_sharp,
+                              color: Color.fromARGB(255, 255, 200, 0), size: 30)
+                          : const Icon(Icons.bookmark_border_sharp,
+                              color: Color.fromARGB(255, 255, 200, 0),
+                              size: 30),
                     ),
                   ],
                 ),
