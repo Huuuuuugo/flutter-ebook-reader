@@ -1,16 +1,23 @@
-# ebook_reader
+# Como Usar
+Para usar o aplicativo basta baixar uma das versões em Releases e instalar em um celular ou emulador.
 
-A new Flutter project.
+# Como Compilar
+Certifique-se de que seu ambiente de desenvolvimento esteja devidamente configurado. Para compilar sua própria versão do aplicativo, siga estas etapas:
 
-## Getting Started
+1. Instalar Dependências
+Execute o seguinte comando para instalar todas as dependências necessárias:
+```
+flutter pub get
+```
+2. Compilar para Android
+Para criar uma versão do aplicativo para Android que você pode instalar em um celular ou emulador, execute:
+```
+flutter build apk
+```
 
-This project is a starting point for a Flutter application.
+3. Encontrar o APK
+O APK gerado estará localizado em `build/app/outputs/flutter-apk/app-release.apk`.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Dicas Adicionais
+- **Testar Antes de Compilar**: Utilize `flutter run` para testar o aplicativo em um dispositivo conectado ou emulador antes de compilar.
+- **Verificar Dependências**: Sempre atualize as dependências no `pubspec.yaml` e execute `flutter pub get` após fazer alterações.
