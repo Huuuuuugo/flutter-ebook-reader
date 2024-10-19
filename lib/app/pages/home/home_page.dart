@@ -22,6 +22,12 @@ class HomePageState extends State<HomePage> {
   );
   bool favoritesToggle = false;
 
+  void callback() {
+    if (favoritesToggle) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -134,6 +140,7 @@ class HomePageState extends State<HomePage> {
 
                       return BookCard(
                         book: item,
+                        callback: callback,
                       );
                     },
                   );

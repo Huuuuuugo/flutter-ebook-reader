@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 class BookCard extends VocsyEpubWidget {
   // constructor arguments
   final BookModel book;
+  final Function? callback;
 
   const BookCard({
     super.key,
+    this.callback,
     required this.book,
   });
 
@@ -77,6 +79,9 @@ class BookCardState extends VocsyEpubWidgetState<BookCard> {
                           isFavorite = favoritesRepository!.list
                               .contains(widget.book.id);
                         });
+                        if (widget.callback != null) {
+                          widget.callback!();
+                        }
                       },
                       child: isFavorite
                           ? Icon(Icons.bookmark_sharp,
