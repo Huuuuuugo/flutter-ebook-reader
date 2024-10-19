@@ -30,6 +30,9 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    print('media $width');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -111,12 +114,11 @@ class HomePageState extends State<HomePage> {
                     physics: BouncingScrollPhysics(),
                     itemCount: booksList.length,
                     padding: const EdgeInsets.only(top: 48, bottom: 80),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: width < 600 ? 3 : 4,
                       crossAxisSpacing: 16.0,
                       mainAxisSpacing: 16.0,
-                      childAspectRatio: 0.6,
+                      childAspectRatio: width < 600 ? 0.6 : 1.2,
                     ),
                     itemBuilder: (_, index) {
                       final item = booksList[index];
