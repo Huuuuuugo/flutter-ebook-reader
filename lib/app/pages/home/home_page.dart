@@ -45,21 +45,30 @@ class HomePageState extends State<HomePage> {
         children: [
           Row(
             children: [
-              Padding(padding: const EdgeInsets.only(top: 32, left: 16)),
-              Text(
-                'Apenas favoritos: ',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Transform.scale(
-                scale: 0.7,
-                child: Switch(
-                    value: favoritesToggle,
-                    onChanged: (bool newValue) {
-                      setState(() {
-                        favoritesToggle = newValue;
-                      });
-                    }),
-              ),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      favoritesToggle = false;
+                    });
+                  },
+                  style: !favoritesToggle
+                      ? ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(Colors.grey.shade400))
+                      : ButtonStyle(),
+                  child: Text('Livros')),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      favoritesToggle = true;
+                    });
+                  },
+                  style: favoritesToggle
+                      ? ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(Colors.grey.shade400))
+                      : ButtonStyle(),
+                  child: Text('Favoritos')),
             ],
           ),
           Expanded(

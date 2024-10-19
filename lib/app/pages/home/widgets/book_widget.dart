@@ -79,10 +79,27 @@ class BookCardState extends VocsyEpubWidgetState<BookCard> {
                         });
                       },
                       child: isFavorite
-                          ? const Icon(Icons.bookmark_sharp,
-                              color: Color.fromARGB(255, 255, 200, 0), size: 30)
-                          : const Icon(Icons.bookmark_border_sharp,
-                              color: Color.fromARGB(255, 255, 200, 0),
+                          ? Icon(Icons.bookmark_sharp,
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  offset: Offset(2.0, 2.0),
+                                  blurRadius: 4.0,
+                                  spreadRadius: 1.0,
+                                )
+                              ],
+                              color: Color.fromARGB(255, 240, 0, 0),
+                              size: 30)
+                          : Icon(Icons.bookmark_border_sharp,
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  offset: Offset(1.5, 1.0),
+                                  blurRadius: 4.0,
+                                  spreadRadius: 1.0,
+                                )
+                              ],
+                              color: Color.fromARGB(255, 240, 0, 0),
                               size: 30),
                     ),
                   ],
